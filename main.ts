@@ -22,8 +22,12 @@ mkdirSync(outDir, { recursive: true });
 const dst = `${outDir}/entry.txt`;
 writeFileSync(dst, LINE, "utf8");
 
-// Verify what landed on disk is exactly the line, no extra bytes.
+// Verify what landed on disk is exactly the line, no extra bytes,
+// no trailing newline, and still inside the gate's 1-140 character cap.
 const back = readFileSync(dst, "utf8");
 if (back !== LINE) {
   throw new Error("entry.txt does not match the line");
+}
+if (back.endsWith("\n") || back.length !== LINE.length) {
+  throw new Error("entry.txt must be the bare line, nothing more");
 }
